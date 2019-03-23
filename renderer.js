@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
+const process = require('process');
 
 const found = [];
 let matches_count = 0;
@@ -9,11 +10,22 @@ let query_input;
 let selection = 0;
 
 function main() {
-	fs.readFile('./fuzz.config', 'utf8', (err, data) => {
+	fs.readFile('./fuzz.txt', 'utf8', (err, data) => {
 		if (!err) {
 			for (let line of data.split('\n')) {
 				gather_from(line.trim());
 			}
+		} else {
+			const example_content = 'D:/example/path/to/search/in\n' +
+				'C:/replace/with/your/search/directories\n' +
+				'E:/one/line/per\n' +
+				'C:/this/config/file/is/in/your/install/directory/as/fuzz.txt\n' +
+				'C:/have/fun/yo';
+			fs.writeFile('./fuzz.txt', example_content, err => {
+				if (!err) {
+					child_process.exec(`start ./fuzz.txt`);
+				}
+			});
 		}
 	});
 
@@ -107,7 +119,7 @@ function handle_keydown(event) {
 				break;
 			case 'Enter':
 				if (selection != -1) {
-					const current_selection = found[selection].path;
+					const current_selection = list_elements[selection].path.innerHTML;
 					child_process.exec(`start "" "${current_selection}"`);
 				}
 				break;
