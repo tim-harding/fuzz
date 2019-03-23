@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fuzz</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+
+  <body>
+    <form>
+      <input type="text" name="query" autofocus>
+    </form>
+    <div id="results"></div>
+  </body>
+
+  <template>
+    <div id="list_element" class="list_item">
+      <div class="directory_name"></div> 
+      <div class="directory_path"></div>
+    </div>
+  </template>
+
+  <script>
+    require('./renderer.js')
+  </script>
+</html>
