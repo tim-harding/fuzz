@@ -18,12 +18,11 @@ function main() {
 		} else {
 			const example_content = 'D:/example/path/to/search/in\n' +
 				'C:/replace/with/your/search/directories\n' +
-				'E:/one/line/per\n' +
-				'C:/this/config/file/is/in/your/install/directory/as/fuzz.txt\n' +
+				'E:/one/line/per/folder\n' +
 				'C:/have/fun/yo';
 			fs.writeFile('./fuzz.txt', example_content, err => {
 				if (!err) {
-					child_process.exec(`start ./fuzz.txt`);
+					open_settings();
 				}
 			});
 		}
@@ -31,6 +30,7 @@ function main() {
 
 	query_input = document.querySelector('input[name=query]');
 	query_input.oninput = update_found;
+	document.getElementById('settings').onclick = open_settings;
 	document.addEventListener('keydown', handle_keydown);
 
 	const results = document.getElementById('results');
@@ -127,6 +127,10 @@ function handle_keydown(event) {
 		update_selection();
 		update_found();
 	}
+}
+
+function open_settings() {
+	child_process.exec(`start ./fuzz.txt`);
 }
 
 main();
