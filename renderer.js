@@ -112,21 +112,36 @@ function handle_keydown(event) {
 	if (event.ctrlKey) {
 		switch (event.key) {
 			case 'j':
-				selection++;
+				move_selection(1);
 				break;
 			case 'k':
-				selection--;
-				break;
-			case 'Enter':
-				if (selection != -1) {
-					const current_selection = list_elements[selection].path.innerHTML;
-					child_process.exec(`start "" "${current_selection}"`);
-				}
+				move_selection(-1);
 				break;
 		}
-		update_selection();
-		update_found();
+	} else {
+		switch (event.key) {
+			case 'Enter':
+				open_selection();
+				break;
+			case 'ArrowUp':
+				move_selection(-1);
+				break;
+			case 'ArrowDown':
+				move_selection(1);
+				break;
+		}
 	}
+}
+
+function move_selection(offset) {
+	selection += offset;
+	update_found();
+	update_selection();
+}
+
+function open_selection() {
+	const current_selection = list_elements[selection].path.innerHTML;
+	child_process.exec(`start "" "${current_selection}"`);
 }
 
 function open_settings() {
