@@ -3,20 +3,16 @@
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
-const process = require('process');
 
 const found = [];
 let matches_count = 0;
-const list_elements = [];
-let query_input;
-let selection = 0;
+const list_items = [];
+let selection = -1;
 
 function main() {
 	initialize_from_settings();
-	register_event_handlers();
 	initialize_search_results_ui();
-	update_selection();
-	highlight_selection();
+	document.addEventListener('keydown', handle_keydown);
 }
 
 function initialize_from_settings() {
@@ -40,40 +36,26 @@ function initialize_from_settings() {
 	});
 }
 
-function register_event_handlers() {
-	query_input = document.querySelector('input[name=query]');
-	query_input.oninput = update_found;
-	document.getElementById('settings').onclick = open_settings;
-	document.addEventListener('keydown', handle_keydown);
-}
-
 function initialize_search_results_ui() {
 	const results = document.getElementById('results');
-	results.onmousedown = open_selection;
-	const template = document.getElementsByTagName('template')[0];
-	const list_element = template.content.querySelector('#list_element');
+	const template = document.getElementById('list_item_template');
 	for (let i = 0; i < 9; i++) {
-		const instance = list_element.cloneNode(true);
-		instance.onmouseover = mouseover_handler_for_index(i);
-		instance.classList.add(i % 2 == 0 ? 'even' : 'odd');
-		results.appendChild(instance);
-		const directory_name = instance.querySelector('.directory_name');
-		const directory_path = instance.querySelector('.directory_path');
-		list_elements.push({
-			root: instance, 
-			name: directory_name,
-			path: directory_path,
+		const clone = document.importNode(template.content, true);
+		const root = clone.querySelector('.list_item'); 
+		root.onmouseover = () => set_selection(i);
+		const name = clone.querySelector('.directory_name');
+		const path = clone.querySelector('.directory_path');
+		results.appendChild(clone);
+		list_items.push({
+			root: root, 
+			name: name,
+			path: path,
 		});
 	}
 }
 
-function mouseover_handler_for_index(index) {
-	return () => set_selection(index);
-}
-
 function gather_from(base) {
 	fs.readdir(base, (err, contents) => {
-		console.log(err);
 		if (!err) {
 			for (const item of contents) {
 				const full_path = path.join(base, item);
@@ -90,15 +72,15 @@ function gather_from(base) {
 	});
 }
 
-function update_found() {
-	const query = query_input.value.toLowerCase();
+function update_found(sender) {
+	const query = sender.value.toLowerCase();
 	let matches = found.filter(value => value.name.includes(query));
 	if (query == '') {
 		matches = [];
 	}
 	matches_count = matches.length;
-	for (let i = 0; i < list_elements.length; i++) {
-		const element = list_elements[i];
+	for (let i = 0; i < list_items.length; i++) {
+		const element = list_items[i];
 		let name = '';
 		let path = '';
 		if (i < matches.length) {
@@ -109,16 +91,12 @@ function update_found() {
 		element.path.innerHTML = path;
 	}
 	update_selection();
-	highlight_selection();
 }
 
 function update_selection() {
 	selection = Math.min(Math.max(0, selection), matches_count - 1);
-}
-
-function highlight_selection() {
-	for (let i = 0; i < list_elements.length; i++) {	
-		const element = list_elements[i];
+	for (let i = 0; i < list_items.length; i++) {	
+		const element = list_items[i];
 		if (i == selection) {
 			element.root.classList.add('selected');
 		} else {
@@ -158,12 +136,11 @@ function offset_selection(offset) {
 
 function set_selection(index) {
 	selection = index;
-	update_found();
 	update_selection();
 }
 
 function open_selection() {
-	const current_selection = list_elements[selection].path.innerHTML;
+	const current_selection = list_items[selection].path.innerHTML;
 	child_process.exec(`start "" "${current_selection}"`);
 }
 

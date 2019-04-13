@@ -1,0 +1,61 @@
+input[name=query] {
+	width: calc(100% - 12px);
+	height: 50px;
+	font-size: 30px;
+	padding-left: 12px;
+}
+
+#results {
+	position: relative;
+	display: inline-block;
+	top: 10px;
+	left: 10%;
+	width: 80%;
+	overflow: hidden;
+}
+
+#results * {
+	padding-left: 6px;
+}
+
+.list_item {
+	width: 100%;
+	height: 50px;	
+}
+
+.selected {
+	background-color: #046;
+}
+
+.directory_name {
+	font-size: 22px;
+}
+
+.directory_path {
+	font-size: 16px;
+}
+
+#settings {
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+}
+
+span {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	width: 24px;
+	height: 24px;
+}
+
+#settings {
+	transition: transform 0.4s;
+}
+
+#settings:hover {
+	transform: rotate(90deg);
+}

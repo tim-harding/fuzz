@@ -1,0 +1,58 @@
+@font-face {
+	font-family: 'roboto';
+	src: url('fonts/roboto/Roboto-Medium.ttf');
+}
+
+* {
+	font-family: 'roboto';
+}
+
+body {
+	background-color: #333;
+}
+
+ul {
+	overflow: hidden;
+	list-style-type: none;
+	padding: 0;
+}
+
+input {
+	border-width: 0;
+	outline-width: 0;
+}
+
+.dark_bg, button:not(.removed), li:nth-child(odd) {
+	background-color: #444;
+}
+
+.light_bg, li:nth-child(even) {
+	background-color: #555;
+}
+
+.primary_text, button:not(.removed) {
+	color: #aaa;
+}
+
+.secondary_text {
+	color: #888;
+}
+
+.rounded, button:not(.removed) {
+	border-width: 0;
+	border-radius: 5px;
+}
+
+a {
+	text-decoration: none;
+	font-size: 14px;
+}
+
+button:not(.removed) {
+	padding: 5px;
+}
+
+/* SVG stealing click events */
+object {
+	pointer-events: none;
+}

@@ -3,23 +3,28 @@
   <head>
     <meta charset="UTF-8">
     <title>Fuzz</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="shared.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
   </head>
+  <script type="text/javascript" src="index.js" async defer></script>
 
   <body>
-    <input type="text" name="query" autofocus>
-    <div id="results"></div>
-    <button id="settings">Settings</button>
+    <input 
+      type="text" 
+      name="query" 
+      class="rounded dark_bg primary_text" 
+      oninput="update_found(this)" 
+      autofocus>
+    <ul id="results" onclick="open_selection()" class="rounded"></ul>
+    <a id="settings" href="settings.html">
+      <object type="image/svg+xml" data="content/gear.svg"></object>
+    </a>
   </body>
 
-  <template>
-    <div id="list_element" class="list_item">
-      <div class="directory_name"></div> 
-      <div class="directory_path"></div>
-    </div>
+  <template id="list_item_template">
+    <li class="list_item">
+      <span class="directory_name primary_text"></span> 
+      <span class="directory_path secondary_text"></span>
+    </li>
   </template>
-
-  <script async defer>
-    require('./renderer.js')
-  </script>
 </html>

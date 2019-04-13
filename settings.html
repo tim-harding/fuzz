@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Settings</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="shared.css">
+		<link rel="stylesheet" type="text/css" href="settings.css">
+	</head>
+	<script type="text/javascript" src="settings.js" async defer></script>
+
+	<body>
+		<ul id="dir_list" class="rounded"></ul>
+		<button onclick="commit_storage();" class="right">Save</button>
+		<button onclick="go_back();" class="right cancel_button">Cancel</button>
+		<button onclick="insert_row('');">Add</button>
+	</body>
+
+	<template id="list_item_template">
+		<li>
+			<input type="text" name="directory" class="primary_text">
+			<button class="removed remove_button right">
+				<object type="image/svg+xml" data="content/x.svg"></object>
+			</button>
+		</li>	
+	</template>
+</html>
