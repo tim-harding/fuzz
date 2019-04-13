@@ -133,8 +133,4 @@ function open_selection() {
 	child_process.exec(`start "" "${current_selection}"`);
 }
 
-function open_settings() {
-	child_process.exec(`start ./fuzz.txt`);
-}
-
 main();
