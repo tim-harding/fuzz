@@ -56,3 +56,7 @@ button:not(.removed) {
 object {
 	pointer-events: none;
 }
+
+span {
+	cursor: pointer;
+}

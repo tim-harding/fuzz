@@ -16,24 +16,13 @@ function main() {
 }
 
 function initialize_from_settings() {
-	fs.readFile('./fuzz.txt', 'utf8', (err, data) => {
-		if (!err) {
-			for (let line of data.split('\n')) {
-				gather_from(line.trim());
-			}
-		// Create settings if absent
-		} else {
-			const example_content = 'D:/example/path/to/search/in\n' +
-				'C:/replace/with/your/search/directories\n' +
-				'E:/one/line/per/folder\n' +
-				'C:/have/fun/yo';
-			fs.writeFile('./fuzz.txt', example_content, err => {
-				if (!err) {
-					open_settings();
-				}
-			});
+	const settings = window.localStorage.getItem('directories');
+	if (settings !== null) {
+		const directories = JSON.parse(settings);
+		for (const directory of directories) {
+			gather_from(directory);
 		}
-	});
+	}
 }
 
 function initialize_search_results_ui() {

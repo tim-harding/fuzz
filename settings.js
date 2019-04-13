@@ -1,22 +1,21 @@
+'use strict';
+
 const item_template = document.getElementById('list_item_template');
 const dir_list = document.getElementById('dir_list');
 
 function main() {
-	// reset_storage();
 	log_current_storage();
-	const directories = JSON.parse(window.localStorage.getItem('directories'));
-	for (const directory of directories) {
-		insert_row(directory);
+	const settings = window.localStorage.getItem('directories');
+	if (settings !== null) {
+		const directories = JSON.parse(settings);
+		for (const directory of directories) {
+			insert_row(directory);
+		}
 	}
 }
 
 function log_current_storage() {
 	console.log(window.localStorage.getItem('directories'));
-}
-
-function reset_storage() {
-	const content = ['/path/to/things', '/path/to/stuff'];
-	window.localStorage.setItem('directories', JSON.stringify(content));
 }
 
 function commit_storage() {

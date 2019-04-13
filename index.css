@@ -24,7 +24,7 @@ input[name=query] {
 }
 
 .selected {
-	background-color: #046;
+	background-color: #046 !important;
 }
 
 .directory_name {
