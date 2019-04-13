@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
@@ -10,11 +12,20 @@ let query_input;
 let selection = 0;
 
 function main() {
+	initialize_from_settings();
+	register_event_handlers();
+	initialize_search_results_ui();
+	update_selection();
+	highlight_selection();
+}
+
+function initialize_from_settings() {
 	fs.readFile('./fuzz.txt', 'utf8', (err, data) => {
 		if (!err) {
 			for (let line of data.split('\n')) {
 				gather_from(line.trim());
 			}
+		// Create settings if absent
 		} else {
 			const example_content = 'D:/example/path/to/search/in\n' +
 				'C:/replace/with/your/search/directories\n' +
@@ -27,17 +38,23 @@ function main() {
 			});
 		}
 	});
+}
 
+function register_event_handlers() {
 	query_input = document.querySelector('input[name=query]');
 	query_input.oninput = update_found;
 	document.getElementById('settings').onclick = open_settings;
 	document.addEventListener('keydown', handle_keydown);
+}
 
+function initialize_search_results_ui() {
 	const results = document.getElementById('results');
+	results.onmousedown = open_selection;
 	const template = document.getElementsByTagName('template')[0];
 	const list_element = template.content.querySelector('#list_element');
 	for (let i = 0; i < 9; i++) {
 		const instance = list_element.cloneNode(true);
+		instance.onmouseover = mouseover_handler_for_index(i);
 		instance.classList.add(i % 2 == 0 ? 'even' : 'odd');
 		results.appendChild(instance);
 		const directory_name = instance.querySelector('.directory_name');
@@ -48,8 +65,10 @@ function main() {
 			path: directory_path,
 		});
 	}
-	update_selection();
-	highlight_selection();
+}
+
+function mouseover_handler_for_index(index) {
+	return () => set_selection(index);
 }
 
 function gather_from(base) {
@@ -112,10 +131,10 @@ function handle_keydown(event) {
 	if (event.ctrlKey) {
 		switch (event.key) {
 			case 'j':
-				move_selection(1);
+				offset_selection(1);
 				break;
 			case 'k':
-				move_selection(-1);
+				offset_selection(-1);
 				break;
 		}
 	} else {
@@ -124,17 +143,21 @@ function handle_keydown(event) {
 				open_selection();
 				break;
 			case 'ArrowUp':
-				move_selection(-1);
+				offset_selection(-1);
 				break;
 			case 'ArrowDown':
-				move_selection(1);
+				offset_selection(1);
 				break;
 		}
 	}
 }
 
-function move_selection(offset) {
-	selection += offset;
+function offset_selection(offset) {
+	set_selection(selection + offset);
+}
+
+function set_selection(index) {
+	selection = index;
 	update_found();
 	update_selection();
 }
