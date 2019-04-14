@@ -3,28 +3,46 @@
   <head>
     <meta charset="UTF-8">
     <title>Fuzz</title>
-    <link rel="stylesheet" type="text/css" href="shared.css">
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script type="text/javascript" src="index.js" defer></script>
   </head>
-  <script type="text/javascript" src="index.js" async defer></script>
 
   <body>
-    <input 
-      type="text" 
-      name="query" 
-      class="rounded dark_bg primary_text" 
-      oninput="update_found(this)" 
-      autofocus>
-    <ul id="results" onclick="open_selection()" class="rounded"></ul>
-    <a id="settings" href="settings.html">
-      <object type="image/svg+xml" data="assets/gear.svg"></object>
-    </a>
+    <main>
+      <section id="search">
+        <input type="text" id="query" autofocus>
+        <ul id="results">
+          <!-- Add results by script in Search class -->
+        </ul>
+        <button id="settings_button">
+          <object type="image/svg+xml" data="assets/gear.svg"></object>
+        </button>
+      </section>
+
+      <!-- <section id="settings"> -->
+        <!-- <ul id="dir_list"> -->
+          <!-- Add directories by script in Settings class -->
+        <!-- </ul> -->
+        <!-- <button id="save_button" class="normal_button">Save</button> -->
+        <!-- <button id="cancel_button" class="normal_button">Cancel</button> -->
+        <!-- <button id="add_button" class="normal_button">Add</button> -->
+      <!-- </section> -->
+    </main>
   </body>
 
-  <template id="list_item_template">
-    <li class="list_item">
-      <span class="directory_name primary_text"></span> 
-      <span class="directory_path secondary_text"></span>
+  <template id="search_result_template">
+    <li class="search_result">
+      <span class="directory_name"></span> 
+      <span class="directory_path"></span>
     </li>
+  </template>
+
+  <template id="setting_template">
+    <li>
+      <input type="text" name="directory" class="primary_text">
+      <button class="removed remove_button right">
+        <object type="image/svg+xml" data="assets/x.svg"></object>
+      </button>
+    </li> 
   </template>
 </html>

@@ -1,0 +1,175 @@
+/************
+Shared styles
+************/
+
+@font-face {
+	font-family: 'roboto';
+	src: url('assets/fonts/roboto/Roboto-Medium.ttf');
+}
+
+* {
+	font-family: 'roboto';
+}
+
+body {
+	background-color: #333;
+}
+
+ul {
+	overflow: hidden;
+	list-style-type: none;
+	padding: 0;
+	border-width: 0;
+	border-radius: 5px;
+}
+
+input {
+	border-width: 0;
+	outline-width: 0;
+}
+
+object {
+	pointer-events: none;  /* SVG stealing click events */
+	width: 100%;
+	height: 100%;
+}
+
+span {
+	cursor: pointer;
+}
+
+li:nth-child(even) {
+	background-color: #555;
+}
+
+li:nth-child(odd) {
+	background-color: #444;
+}
+
+.normal_button {
+	background-color: #444;
+	color: #aaa;
+	border-width: 0;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+
+
+
+/************
+Search styles
+************/
+
+#search {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#query {
+	padding-left: 12px;
+	width: calc(100% - 12px);
+	height: 50px;
+	font-size: 30px;
+	border-width: 0;
+	border-radius: 5px;
+	color: #aaa;
+	background-color: #444;
+}
+
+#results {
+	width: calc(100% - 128px);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.search_result {
+	width: 100%;
+	height: 46px;
+	display: flex;
+	flex-direction: column;
+	padding-left: 10px;
+	padding-top: 6px;
+}
+
+.selected {
+	background-color: #046 !important;
+}
+
+.directory_name {
+	margin: 0;
+	color: #aaa;
+	font-size: 22px;
+}
+
+.directory_path {
+	margin: 0;
+	color: #888;
+	font-size: 16px;
+}
+
+#settings_button {
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+	width: 24px;
+	height: 24px;
+	border-width: 0;
+	background-color: transparent;
+	display: flex;
+	padding: 0;
+	transition: transform 0.4s;
+}
+
+#settings_button:hover {
+	transform: rotate(90deg);
+}
+
+
+
+
+/**************
+Settings styles
+**************/
+
+li {
+	padding: 8px 8px 8px 14px;
+}
+
+input {
+	background-color: transparent;
+	font-size: 16px;
+	width: calc(100% - 32px);
+}
+
+.right {
+	float: right;
+}
+
+li:hover > button {
+	visibility: visible;
+}
+
+.remove_button {
+	width: 16px;
+	height: 16px;
+	margin: 2px 4px 0px 0px;
+	padding: 0;
+	border-style: none;
+	background: transparent;
+	visibility: hidden;
+}
+
+.cancel_button {
+	margin-right: 8px;
+}
+
+img {
+	width: 200%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: black;
+}
