@@ -4,52 +4,44 @@ const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
 
-class Search {
+const MATCHES_COUNT = 9;
+const DIRECTORIES = 'directories';
+const SELECTED = 'selected';
+
+class Settings {
+	constructor() {
+		const storage = window.localStorage.getItem(DIRECTORIES);
+		this.value = storage !== null ?
+			JSON.parse(storage) :
+			[];
+	}
+
+	set directories(value) {
+		this.value = value;
+		window.localStorage.setItem(DIRECTORIES, JSON.stringify(value));
+	}
+
+	get directories() {
+		return this.value;
+	}
+}
+
+
+class Matches {
 	constructor() {
 		this.initialize_members();
-		this.initialize_handlers();
-		this.gather_directories();
-		this.initialize_search_results_ui();
-	}	
+		this.gather();
+	}
 
 	initialize_members() {
 		this.found = [];
-		this.matches_count = 0;
-		this.list_items = [];
-		this.selection = -1;
+		this.filtered_indices = new Array(MATCHES_COUNT);
+		this.count = 0;
 	}
 
-	initialize_handlers() {
-		document.getElementById('query').oninput = e => this.update_found(e);
-		document.getElementById('results').onclick = e => this.open_selection(e);
-		document.addEventListener('keydown', e => this.handle_keydown(e));
-	}
-
-	gather_directories() {
-		const settings = window.localStorage.getItem('directories');
-		if (settings !== null) {
-			const directories = JSON.parse(settings);
-			for (const directory of directories) {
-				this.gather_from(directory);
-			}
-		}
-	}
-
-	initialize_search_results_ui() {
-		const results = document.getElementById('results');
-		const template = document.getElementById('search_result_template');
-		for (let i = 0; i < 9; i++) {
-			const clone = document.importNode(template.content, true);
-			const root = clone.querySelector('.search_result'); 
-			root.onmouseover = () => this.set_selection(i);
-			const name = clone.querySelector('.directory_name');
-			const path = clone.querySelector('.directory_path');
-			results.appendChild(clone);
-			this.list_items.push({
-				root: root, 
-				name: name,
-				path: path,
-			});
+	gather() {
+		for (const directory of settings.directories) {
+			this.gather_from(directory);
 		}
 	}
 
@@ -71,91 +63,138 @@ class Search {
 		});
 	}
 
-	update_found(event) {
-		const query = event.target.value.toLowerCase();
-		let matches = this.found.filter(value => value.name.includes(query));
-		if (query == '') {
-			matches = [];
-		}
-		this.matches_count = matches.length;
-		for (let i = 0; i < this.list_items.length; i++) {
-			const element = this.list_items[i];
-			let name = '';
-			let path = '';
-			if (i < matches.length) {
-				name = matches[i].name;
-				path = matches[i].path;
+	filter(query) {
+		let found = 0;
+		const count = this.found.length;
+		for (let i = 0; i < count && found < MATCHES_COUNT; i++) {
+			const path = this.found[i].path;
+			if (path.includes(query)) {
+				this.filtered_indices[found] = i;
+				found++;
 			}
-			element.name.innerHTML = name;
-			element.path.innerHTML = path;
 		}
-		this.update_selection();
+		this.count = found;
+		for (; found < MATCHES_COUNT; found++) {
+			this.filtered_indices[found] = -1;
+		}
+	}
+}
+
+
+class SearchUI {
+	constructor() {
+		this.initialize_members();
+		this.initialize_handlers();
+		this.initialize_search_results_ui();
+	}	
+
+	initialize_members() {
+		this.selection = -1;
+		this.result_elements = [];
+		this.matches = new Matches();
 	}
 
-	update_selection() {
-		this.selection = Math.min(Math.max(0, this.selection), this.matches_count - 1);
-		for (let i = 0; i < this.list_items.length; i++) {	
-			const element = this.list_items[i];
-			if (i == this.selection) {
-				element.root.classList.add('selected');
-			} else {
-				element.root.classList.remove('selected');
-			}
+	initialize_handlers() {
+		document.getElementById('query').oninput = this.update_found.bind(this);
+		document.getElementById('results').onclick = this.open_selection.bind(this);
+		document.addEventListener('keydown', this.handle_keydown.bind(this));
+	}
+
+	initialize_search_results_ui() {
+		const results = document.getElementById('results');
+		const template = document.getElementById('search_result_template');
+		for (let i = 0; i < MATCHES_COUNT; i++) {
+			const clone = document.importNode(template.content, true);
+			const root = clone.querySelector('.search_result'); 
+			root.onmouseover = this.update_selection.bind(this, i);
+			const name = clone.querySelector('.directory_name');
+			const path = clone.querySelector('.directory_path');
+			results.appendChild(clone);
+			this.result_elements.push({
+				root: root, 
+				name: name,
+				path: path,
+			});
 		}
+	}
+
+	update_found(event) {
+		const query = event.target.value.toLowerCase();
+		this.matches.filter(query);
+		const found = this.matches.found;
+		const indices = this.matches.filtered_indices;
+		for (let i = 0; i < MATCHES_COUNT; i++) {
+			const index = indices[i];
+			const match = index > -1 ? found[index] : { name: '', path: '' };
+			const element = this.result_elements[i];
+			element.name.innerHTML = match.name;
+			element.path.innerHTML = match.path;
+		}
+		this.update_selection(this.selection);
 	}
 
 	handle_keydown(event) {
 		if (event.ctrlKey) {
 			switch (event.key) {
-				case 'j':
-					this.increment_selection();
-					break;
-				case 'k':
-					this.decrement_selection();
-					break;
+			case 'j':
+				this.increment_selection();
+				break;
+			case 'k':
+				this.decrement_selection();
+				break;
 			}
 		} else {
-			switch (event.key) {
-				case 'Enter':
-					this.open_selection();
-					break;
-				case 'ArrowUp':
-					this.decrement_selection();
-					break;
-				case 'ArrowDown':
-					this.increment_selection();
-					break;
+			switch (event.keyCode) {
+			case 13: // Enter
+				this.open_selection();
+				break;
+			case 38: // ArrowUp
+				this.decrement_selection();
+				break;
+			case 40: // ArrowDown
+				this.increment_selection();
+				break;
 			}
 		}
 	}
 
 	increment_selection() {
-		this.selection++;
-		this.update_selection();
+		this.update_selection(this.selection + 1);
 	}
 
 	decrement_selection() {
-		this.selection--;
-		this.update_selection();
+		this.update_selection(this.selection - 1);
 	}
 
-	set_selection(index) {
-		this.selection = index;
-		this.update_selection();
+	update_selection(index) {
+		this.modify_selection(false);
+		this.selection = Math.min(Math.max(0, index), this.matches.count - 1);
+		this.modify_selection(true);
+	}
+
+	modify_selection(add) {
+		if (this.selection > -1) {
+			const classes = this.result_elements[this.selection].root.classList;
+			if (add) {
+				classes.add(SELECTED);
+			} else {
+				classes.remove(SELECTED);
+			}
+		}
 	}
 
 	open_selection() {
-		const current_selection = this.list_items[this.selection].path.innerHTML;
+		const current_selection = this.result_elements[this.selection].path.innerHTML;
 		child_process.exec(`start "" "${current_selection}"`);
 	}
 }
 
 
-class Settings {
+class SettingsUI {
 	constructor() {
-		initialize_members();
-		initialize_handlers();
-		initialize_ui();
+		this.initialize_members();
+		this.initialize_handlers();
+		this.initialize_ui();
 	}
 
 	initialize_members() {
@@ -164,9 +203,9 @@ class Settings {
 	}
 
 	initialize_handlers() {
-		document.getElementById('save_button').onclick = () => this.commit_storage();
-		document.getElementById('cancel_button').onclick = () => this.go_back();
-		document.getElementById('add_button').onclick = () => this.insert_row("");
+		document.getElementById('save_button').onclick = this.commit_storage.bind(this);
+		document.getElementById('cancel_button').onclick = this.go_back.bind(this);
+		document.getElementById('add_button').onclick = this.insert_row.bind(this, '');
 	}
 
 	initialize_ui() {
@@ -174,18 +213,18 @@ class Settings {
 		if (settings !== null) {
 			const directories = JSON.parse(settings);
 			for (const directory of directories) {
-				insert_row(directory);
+				this.insert_row(directory);
 			}
 		}
 	}
 
 	commit_storage() {
 		const directories = [];
-		for (const child of dir_list.children) {
+		for (const child of this.dir_list.children) {
 			directories.push(child.querySelector('input').value);
 		}
 		window.localStorage.setItem('directories', JSON.stringify(directories));
-		go_back();
+		this.go_back();
 	}
 
 	insert_row(value) {
@@ -194,8 +233,8 @@ class Settings {
 		const list_item = clone.querySelector('li');
 		const remove_button = clone.querySelector('.remove_button');
 		directory_input.value = value;
-		remove_button.onclick = () => remove_item(list_item);
-		dir_list.appendChild(clone);
+		remove_button.onclick = () => this.remove_item(list_item);
+		this.dir_list.appendChild(clone);
 	}
 
 	go_back() {
@@ -207,5 +246,6 @@ class Settings {
 	}
 }
 
-new Search();
-// new Settings();
+const settings = new Settings();
+new SearchUI();
+// new SettingsUI();
