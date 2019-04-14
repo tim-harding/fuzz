@@ -66,11 +66,13 @@ class Matches {
 	filter(query) {
 		let found = 0;
 		const count = this.found.length;
-		for (let i = 0; i < count && found < MATCHES_COUNT; i++) {
-			const path = this.found[i].path;
-			if (path.includes(query)) {
-				this.filtered_indices[found] = i;
-				found++;
+		if (query !== '') {
+			for (let i = 0; i < count && found < MATCHES_COUNT; i++) {
+				const name = this.found[i].name;
+				if (name.includes(query)) {
+					this.filtered_indices[found] = i;
+					found++;
+				}
 			}
 		}
 		this.count = found;
@@ -101,21 +103,23 @@ class SearchUI {
 	}
 
 	initialize_search_results_ui() {
-		const results = document.getElementById('results');
 		const template = document.getElementById('search_result_template');
+		const fragment = document.createDocumentFragment();
 		for (let i = 0; i < MATCHES_COUNT; i++) {
-			const clone = document.importNode(template.content, true);
+			const clone = template.content.cloneNode(true);
 			const root = clone.querySelector('.search_result'); 
 			root.onmouseover = this.update_selection.bind(this, i);
 			const name = clone.querySelector('.directory_name');
 			const path = clone.querySelector('.directory_path');
-			results.appendChild(clone);
+			fragment.appendChild(clone);
 			this.result_elements.push({
 				root: root, 
 				name: name,
 				path: path,
 			});
 		}
+		const results = document.getElementById('results');
+		results.appendChild(fragment);
 	}
 
 	update_found(event) {
@@ -127,8 +131,8 @@ class SearchUI {
 			const index = indices[i];
 			const match = index > -1 ? found[index] : { name: '', path: '' };
 			const element = this.result_elements[i];
-			element.name.innerHTML = match.name;
-			element.path.innerHTML = match.path;
+			element.name.textContent = match.name;
+			element.path.textContent = match.path;
 		}
 		this.update_selection(this.selection);
 	}
@@ -167,14 +171,18 @@ class SearchUI {
 	}
 
 	update_selection(index) {
-		this.modify_selection(false);
-		this.selection = Math.min(Math.max(0, index), this.matches.count - 1);
-		this.modify_selection(true);
+		const previous = this.selection;
+		const selection = Math.min(Math.max(0, index), this.matches.count - 1);
+		if (selection !== previous) {
+			this.modify_selection(previous, false);
+			this.modify_selection(selection, true);
+			this.selection = selection;
+		}
 	}
 
-	modify_selection(add) {
-		if (this.selection > -1) {
-			const classes = this.result_elements[this.selection].root.classList;
+	modify_selection(index, add) {
+		if (index > -1) {
+			const classes = this.result_elements[index].root.classList;
 			if (add) {
 				classes.add(SELECTED);
 			} else {
