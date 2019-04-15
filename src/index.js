@@ -42,6 +42,7 @@ class Matches {
 	}
 
 	gather() {
+		this.found = [];
 		for (const directory of settings.directories) {
 			this.gather_from(directory);
 		}
@@ -96,6 +97,7 @@ class UISwitcher {
 		if (this.settings_active) {
 			this.main.add(SETTINGS_ACTIVE);
 		} else {
+			search_ui.navigate_to();
 			this.main.remove(SETTINGS_ACTIVE);
 		}
 	}
@@ -113,6 +115,7 @@ class SearchUI {
 		this.selection = -1;
 		this.result_elements = [];
 		this.matches = new Matches();
+		this.query = document.getElementById('query');
 	}
 
 	initialize_handlers() {
@@ -142,8 +145,8 @@ class SearchUI {
 		results.appendChild(fragment);
 	}
 
-	update_found(event) {
-		const query = event.target.value.toLowerCase();
+	update_found() {
+		const query = this.query.value.toLowerCase();
 		this.matches.filter(query);
 		const found = this.matches.found;
 		const indices = this.matches.filtered_indices;
@@ -219,6 +222,13 @@ class SearchUI {
 	open_settings() {
 		switcher.switch();
 	}
+
+	navigate_to() {
+		this.matches.gather();
+		this.query.value = '';
+		this.update_found();
+		this.query.focus();
+	}
 }
 
 
@@ -281,5 +291,5 @@ class SettingsUI {
 
 const settings = new Settings();
 const switcher = new UISwitcher();
-new SearchUI();
+const search_ui = new SearchUI();
 new SettingsUI();
