@@ -7,6 +7,8 @@ const child_process = require('child_process');
 const MATCHES_COUNT = 9;
 const DIRECTORIES = 'directories';
 const SELECTED = 'selected';
+const SETTINGS_ACTIVE = 'settings_active';
+
 
 class Settings {
 	constructor() {
@@ -83,6 +85,23 @@ class Matches {
 }
 
 
+class UISwitcher {
+	constructor() {
+		this.settings_active = false;
+		this.main = document.querySelector('main').classList;
+	}
+
+	switch() {
+		this.settings_active = !this.settings_active;
+		if (this.settings_active) {
+			this.main.add(SETTINGS_ACTIVE);
+		} else {
+			this.main.remove(SETTINGS_ACTIVE);
+		}
+	}
+}
+
+
 class SearchUI {
 	constructor() {
 		this.initialize_members();
@@ -99,6 +118,7 @@ class SearchUI {
 	initialize_handlers() {
 		document.getElementById('query').oninput = this.update_found.bind(this);
 		document.getElementById('results').onclick = this.open_selection.bind(this);
+		document.getElementById('settings_button').onclick = this.open_settings.bind(this);
 		document.addEventListener('keydown', this.handle_keydown.bind(this));
 	}
 
@@ -195,6 +215,10 @@ class SearchUI {
 		const current_selection = this.result_elements[this.selection].path.innerHTML;
 		child_process.exec(`start "" "${current_selection}"`);
 	}
+
+	open_settings() {
+		switcher.switch();
+	}
 }
 
 
@@ -207,7 +231,7 @@ class SettingsUI {
 
 	initialize_members() {
 		this.item_template = document.getElementById('setting_template');
-		this.dir_list = document.getElementById('dir_list');
+		this.settings_list = document.getElementById('settings_list');
 	}
 
 	initialize_handlers() {
@@ -228,10 +252,10 @@ class SettingsUI {
 
 	commit_storage() {
 		const directories = [];
-		for (const child of this.dir_list.children) {
+		for (const child of this.settings_list.children) {
 			directories.push(child.querySelector('input').value);
 		}
-		window.localStorage.setItem('directories', JSON.stringify(directories));
+		settings.directories = directories;
 		this.go_back();
 	}
 
@@ -242,11 +266,11 @@ class SettingsUI {
 		const remove_button = clone.querySelector('.remove_button');
 		directory_input.value = value;
 		remove_button.onclick = () => this.remove_item(list_item);
-		this.dir_list.appendChild(clone);
+		this.settings_list.appendChild(clone);
 	}
 
 	go_back() {
-		window.history.back();
+		switcher.switch();
 	}
 
 	remove_item(item) {
@@ -254,6 +278,8 @@ class SettingsUI {
 	}
 }
 
+
 const settings = new Settings();
+const switcher = new UISwitcher();
 new SearchUI();
-// new SettingsUI();
+new SettingsUI();

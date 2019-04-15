@@ -16,12 +16,19 @@ body {
 main {
 	display: flex;
 	width: 200%;
-	/*transform: translate(0px, 0px);*/
+	height: 100%;
+	transition: transform 1s;
+}
+
+.settings_active {
+	transform: translate(-50%, 0);
 }
 
 section {
 	display: flex;
 	width: 50%;
+	height: 100%;
+	padding: 12px;
 }
 
 input, button, span {
@@ -81,8 +88,7 @@ Search styles
 
 #query {
 	padding-left: 12px;
-	/*width: calc(100% - 12px);*/
-	margin-top: 12px;
+	width: calc(100% - 12px);
 	height: 50px;
 	font-size: 30px;
 	border-width: 0;
@@ -96,6 +102,7 @@ Search styles
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	background-color: black;
 }
 
 .search_result {
@@ -103,8 +110,7 @@ Search styles
 	height: 46px;
 	display: flex;
 	flex-direction: column;
-	padding-left: 10px;
-	padding-top: 6px;
+	padding: 6px 10px 8px 14px;
 }
 
 .selected {
@@ -124,20 +130,36 @@ Search styles
 }
 
 #settings_button {
-	position: absolute;
-	right: 20px;
-	bottom: 20px;
 	width: 24px;
 	height: 24px;
 	border-width: 0;
 	background-color: transparent;
 	display: flex;
 	padding: 0;
+	margin-bottom: 12px;
 	transition: transform 0.4s;
 }
 
 #settings_button:hover {
 	transform: rotate(90deg);
+}
+
+.results_center_container {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	justify-content: space-between;
+}
+
+.settings_button_container {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.size_settings_button {
+	width: 24px;
+	height: 24px;
 }
 
 
@@ -147,22 +169,31 @@ Search styles
 Settings styles
 **************/
 
-li {
+#settings {
+	display: flex;
+	flex-direction: column;
+}
+
+#settings_list {
+	margin-top: 0;
+	background-color: blue;
+}
+
+.setting {
+	display: flex;
+	justify-content: space-between;
 	padding: 8px 8px 8px 14px;
 }
 
-input {
+.setting:hover > button {
+	visibility: visible;
+}
+
+.setting_input {
 	background-color: transparent;
+	color: #aaa;
 	font-size: 16px;
 	width: calc(100% - 32px);
-}
-
-.right {
-	float: right;
-}
-
-li:hover > button {
-	visibility: visible;
 }
 
 .remove_button {
@@ -175,14 +206,20 @@ li:hover > button {
 	visibility: hidden;
 }
 
-.cancel_button {
+#cancel_button {
 	margin-right: 8px;
 }
 
-img {
-	width: 200%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	background: black;
+.align_right {
+	display: flex;
+	justify-content: flex-end;
 }
+
+.settings_buttons_container {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.settings_buttons_container 1
