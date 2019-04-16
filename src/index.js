@@ -121,7 +121,7 @@ class SearchUI {
 	initialize_handlers() {
 		document.getElementById('query').oninput = this.update_found.bind(this);
 		document.getElementById('results').onclick = this.open_selection.bind(this);
-		document.getElementById('settings_button').onclick = this.open_settings.bind(this);
+		document.getElementById('settings_gear').onclick = this.open_settings.bind(this);
 		document.addEventListener('keydown', this.handle_keydown.bind(this));
 	}
 
