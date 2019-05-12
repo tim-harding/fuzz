@@ -1,13 +1,18 @@
 {
   "name": "fuzz",
   "description": "Simple search within specific directories.",
+  "author": "Tim Harding",
+  "private": true,
   "main": "main.js",
+  "version": "0.0.1",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager . --overwrite --icon=logo/logo.ico"
   },
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^4.1.1"
+    "electron": "^4.1.1",
+    "electron-packager": "^13.1.1"
   },
   "dependencies": {}
 }
