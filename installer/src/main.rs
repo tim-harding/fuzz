@@ -6,6 +6,7 @@ use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use std::io::{stdin, stdout, Write};
 
 // Add IconLocation variable to customize
 static SHELL_PROGRAM: &str = "
@@ -14,20 +15,31 @@ $s.TargetPath='EXEPATH';
 $s.Save();";
 
 fn main() {
+	install();
+	println!("Press enter to close");
+	let mut buffer = String::new();
+	let _ = stdout().flush();
+	stdin().read_line(&mut buffer).expect("");
+}
+
+fn install() {
+	println!("Installing Fuzz...");
 	let pwd = env::current_dir()
 		.expect("Couldn't get current directory");
 	let from = Path::join(&pwd, "fuzz-win32-x64");	
-	// let from = Path::new(r"D:\19\03\fuzz_electron\fuzz-win32-x64");
 	let to = Path::new(r"C:\Program Files\Harding");
 	let _ = fs::create_dir(&to);
 	match copy(from, &to, &CopyOptions::new()) {
-		Ok(_) => create_shortcut(&to),
+		Ok(_) => {
+			println!("Copied to program files");
+			create_shortcut(&to);
+		},
 		Err(e) => match e.kind {
 			ErrorKind::AlreadyExists => {
-				println!("Fuzz already exists in Program Files");
+				println!("Fuzz already exists in Program Files, continuing");
 				create_shortcut(&to);
 			},
-			_ => println!("{:?}", e),
+			_ => eprintln!("Failed to copy Fuzz: {:?}", e),
 		}
 	}
 }
@@ -38,9 +50,14 @@ fn create_shortcut(to: &Path) {
 	let command = SHELL_PROGRAM
 		.replace("LNKPATH", link)
 		.replace("EXEPATH", exe.to_string_lossy().into_owned().as_str());
-	println!("{:?}", command);	
-	Command::new("powershell")
+	let status = Command::new("powershell")
 		.arg(command)
-		.spawn()
+		.status()
 		.expect("Failed to launch Start Menu item creation");
+	let output = if status.success() {
+		"Created Start Menu item"
+	} else {
+		"Failed to create Start Menu item"
+	};
+	println!("{}", output);
 }
