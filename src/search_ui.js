@@ -1,5 +1,6 @@
 const Matches = require('./matches');
 const child_process = require('child_process');
+const os = require('os');
 
 const MATCHES_COUNT = 9;
 
@@ -118,7 +119,10 @@ class SearchUI {
 
 	open_selection() {
 		const current_selection = this.result_elements[this.selection].path.innerHTML;
-		child_process.exec(`start "" "${current_selection}"`);
+		const command = os.platform() === 'darwin' ? 
+			`open ${current_selection}` :
+			`start "" "${current_selection}"`;
+		child_process.exec(command);
 	}
 
 	open_settings() {
