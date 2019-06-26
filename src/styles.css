@@ -191,14 +191,24 @@ Settings styles
 	width: calc(100% - 32px);
 }
 
-.remove_button {
-	width: 16px;
-	height: 16px;
-	margin: 2px 4px 0px 0px;
+.setting > button {
+
 	padding: 0;
 	border-style: none;
 	background: transparent;
 	visibility: hidden;
+}
+
+.remove_button {
+	width: 16px;
+	height: 16px;
+	margin: 2px 4px 0px 0px;
+}
+
+.browse_button {
+	width: 24px;
+	height: 24px;
+	margin: -2px 12px 0 0;
 }
 
 #cancel_button {

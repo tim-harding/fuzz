@@ -24,6 +24,7 @@ class SearchUI {
 		document.getElementById('results').onclick = this.open_selection.bind(this);
 		document.getElementById('settings_gear').onclick = this.open_settings.bind(this);
 		document.addEventListener('keydown', this.handle_keydown.bind(this));
+		this.switcher.register_callback(this.handle_switch.bind(this));
 	}
 
 	initialize_search_results_ui() {
@@ -124,11 +125,13 @@ class SearchUI {
 		this.switcher.switch();
 	}
 
-	navigate_to() {
-		this.matches.gather();
-		this.query.value = '';
-		this.update_found();
-		this.query.focus();
+	handle_switch(settings_active) {
+		if (!settings_active) {
+			this.matches.gather();
+			this.query.value = '';
+			this.update_found();
+			this.query.focus();
+		}
 	}
 }
 

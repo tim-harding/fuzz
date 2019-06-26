@@ -40,8 +40,10 @@ class SettingsUI {
 		const directory_input = clone.querySelector('input[name=directory]');
 		const list_item = clone.querySelector('li');
 		const remove_button = clone.querySelector('.remove_button');
+		const browse_button = clone.querySelector('.browse_button');
 		directory_input.value = value;
 		remove_button.onclick = () => this.remove_item(list_item);
+		browse_button.onclick = () => this.browse(list_item);
 		this.settings_list.appendChild(clone);
 	}
 
@@ -51,6 +53,17 @@ class SettingsUI {
 
 	remove_item(item) {
 		item.parentNode.removeChild(item);
+	}
+
+	browse(item) {
+		let options = { properties: ['openDirectory'] };
+		dialog.showOpenDialog(options, filePaths => {
+			if (filePaths !== undefined) {
+				const directory = filePaths[0];
+				const input = item.querySelector('input');
+				input.value = directory;
+			}
+		});
 	}
 }
 
