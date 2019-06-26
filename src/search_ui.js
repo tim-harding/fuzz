@@ -52,7 +52,7 @@ class SearchUI {
 		this.matches.filter(query);
 		const found = this.matches.found;
 		const indices = this.matches.filtered_indices;
-		for (let i = 0; i < 9; i++) {
+		for (let i = 0; i < MATCHES_COUNT; i++) {
 			const index = indices[i];
 			const match = index > -1 ? found[index] : { name: '', path: '' };
 			const element = this.result_elements[i];
