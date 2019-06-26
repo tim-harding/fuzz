@@ -2,3 +2,5 @@ node_modules
 fuzz-*
 *.sublime-*
 installer/target
+*.dmg
+*.icns

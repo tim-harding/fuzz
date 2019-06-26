@@ -8,12 +8,15 @@
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager . --overwrite --icon=logo/logo.ico"
+    "build": "electron-packager . --overwrite --icon=logo/logo.ico",
+    "package": "electron-installer-dmg --overwrite fuzz-darwin-x64/fuzz.app Fuzz"
   },
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^4.1.1",
-    "electron-packager": "^13.1.1"
+    "electron-packager": "^13.1.1",
+    "electron-installer-dmg": "^3.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "electron": "^4.1.1"
+  }
 }
