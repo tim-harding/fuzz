@@ -1,7 +1,7 @@
 node_modules
 packaged
 fuzz-*
+*-x64
 *.sublime-*
 installer/target
 *.dmg
-*.icns
