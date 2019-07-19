@@ -1,8 +1,0 @@
-[package]
-name = "fuzz-installer"
-version = "0.1.0"
-authors = ["timmythetiny <timharding@me.com>"]
-edition = "2018"
-
-[dependencies]
-fs_extra = "1.1.0"
