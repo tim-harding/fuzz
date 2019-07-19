@@ -50,7 +50,8 @@ function packageMacos(packagePath) {
         appPath: path.join(packagePath, "Fuzz.app"),
         name: "Fuzz",
         out: INSTALLERS_DIR,
-        icon: "icon/icon.icns"
+        icon: "icon/icon.icns",
+        overwrite: true,
     }
     installerDmg(options, error => {
         if (error) {
