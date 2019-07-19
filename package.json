@@ -1,5 +1,5 @@
 {
-  "name": "Fuzz",
+  "name": "fuzz",
   "description": "Simple search within specific directories.",
   "author": "Tim Harding",
   "private": true,
